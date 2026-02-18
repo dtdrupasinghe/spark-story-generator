@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spark - AI Story Generator</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            min-height: 100vh;
+            color: #eee;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, #e94560, #f5a623);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: #aaa;
+            margin-bottom: 40px;
+            font-size: 1rem;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            max-width: 700px;
+            backdrop-filter: blur(10px);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #f5a623;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            font-size: 1rem;
+            resize: vertical;
+            margin-bottom: 20px;
+            font-family: inherit;
+        }
+
+        textarea::placeholder { color: #888; }
+
+        .row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .row > div { flex: 1; }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover { opacity: 0.85; }
+
+        #generateBtn {
+            background: linear-gradient(90deg, #e94560, #f5a623);
+            color: white;
+            font-weight: bold;
+        }
+
+        #remixBtn {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        #remixBtn:disabled, #generateBtn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .story-box {
+            margin-top: 32px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 28px;
+            width: 100%;
+            max-width: 700px;
+            display: none;
+        }
+
+        .story-box h2 {
+            color: #f5a623;
+            margin-bottom: 16px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #storyText {
+            line-height: 1.9;
+            font-size: 1.05rem;
+            color: #ddd;
+            white-space: pre-wrap;
+        }
+
+        .copy-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            flex: none;
+            width: auto;
+        }
+
+        .loading {
+            text-align: center;
+            color: #aaa;
+            font-style: italic;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>✨ Spark</h1>
+    <p class="subtitle">Turn your ideas into stories with AI</p>
+
+    <div class="card">
+        <label>Your Story Prompt</label>
+        <textarea id="prompt" rows="3" placeholder="e.g. A lonely astronaut finds a cat on Mars..."></textarea>
+
+        <div class="row">
+            <div>
+                <label>Genre</label>
+                <select id="genre">
+                    <option value="general">General</option>
+                    <option value="mystery">Mystery</option>
+                    <option value="comedy">Comedy</option>
+                    <option value="romance">Romance</option>
+                    <option value="horror">Horror</option>
+                    <option value="sci-fi">Sci-Fi</option>
+                    <option value="fantasy">Fantasy</option>
+                </select>
+            </div>
+            <div>
+                <label>Length</label>
+                <select id="length">
+                    <option value="short">Flash (~100 words)</option>
+                    <option value="medium" selected>Short (~300 words)</option>
+                    <option value="long">Full (~600 words)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button id="generateBtn" onclick="generateStory()">✨ Generate Story</button>
+            <button id="remixBtn" onclick="generateStory()" disabled>🔀 Remix</button>
+        </div>
+    </div>
+
+    <div class="story-box" id="storyBox">
+        <h2>📖 Your Story</h2>
+        <div id="storyText"></div>
+        <button class="copy-btn" onclick="copyStory()">📋 Copy to Clipboard</button>
+    </div>
+
+    <script>
+        let lastPrompt = "";
+
+        async function generateStory() {
+            const prompt = document.getElementById("prompt").value.trim();
+            const genre = document.getElementById("genre").value;
+            const length = document.getElementById("length").value;
+
+            if (!prompt) {
+                alert("Please enter a story prompt first!");
+                return;
+            }
+
+            lastPrompt = prompt;
+
+            document.getElementById("generateBtn").disabled = true;
+            document.getElementById("remixBtn").disabled = true;
+            document.getElementById("storyBox").style.display = "block";
+            document.getElementById("storyText").innerHTML = '<div class="loading">✨ Crafting your story...</div>';
+
+            try {
+                const response = await fetch("/generate", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ prompt, genre, length })
+                });
+
+                const data = await response.json();
+                document.getElementById("storyText").textContent = data.story;
+                document.getElementById("remixBtn").disabled = false;
+            } catch (error) {
+                document.getElementById("storyText").textContent = "Something went wrong. Please try again!";
+            }
+
+            document.getElementById("generateBtn").disabled = false;
+        }
+
+        function copyStory() {
+            const text = document.getElementById("storyText").textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Story copied to clipboard!");
+            });
+        }
+    </script>
+
+</body>
+</html>
