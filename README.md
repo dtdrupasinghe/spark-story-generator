@@ -18,6 +18,15 @@ Spark is an AI-powered short story generator that transforms simple prompts into
 - 📋 **Copy to Clipboard** — Save your story with one click
 - 🌙 **Beautiful dark UI** — Clean, polished, and easy to use
 
+## 🧠 Problem Solving Approach
+
+1. **User need identified** — People have creative ideas but struggle to develop them into full stories
+2. **Solution designed** — A prompt-based generator with genre control gives users creative direction
+3. **Multi-step generation** — The app combines user prompt + genre + length into a structured system prompt for better story quality
+4. **Iteration built in** — The Remix feature lets users refine results without retyping their prompt
+5. **Safety considered** — API keys stored in environment variables, no user data stored or logged
+6. **Reliability ensured** — Error handling on both frontend and backend with clear user feedback
+
 ## 🤖 How GitHub Copilot Helped
 
 GitHub Copilot was used throughout the entire development process:
