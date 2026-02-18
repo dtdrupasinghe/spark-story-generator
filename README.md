@@ -4,6 +4,7 @@
 
 ![Spark App](https://img.shields.io/badge/Track-Creative%20Apps-e94560?style=for-the-badge)
 ![Built With](https://img.shields.io/badge/Built%20With-GitHub%20Copilot-blue?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
 ## 📖 What is Spark?
 
@@ -21,10 +22,23 @@ Spark is an AI-powered short story generator that transforms simple prompts into
 
 GitHub Copilot was used throughout the entire development process:
 
-- **Backend code** — Copilot suggested the Flask route structure and Groq API integration
-- **HTML & CSS** — Copilot helped generate the dark gradient UI and responsive layout
-- **JavaScript** — Copilot autocompleted the fetch API calls and error handling
-- **Debugging** — Copilot Chat helped diagnose and fix API connection issues
+### Code Generation
+- Copilot suggested the Flask route structure (`@app.route`) and helped complete functions automatically
+- Copilot autocompleted the Groq API integration including the messages array format
+- Copilot generated the CSS gradient styling and responsive layout for the UI
+
+### Problem Solving with Copilot Chat
+- Used Copilot Chat to debug API connection errors and resolve module import issues
+- Asked Copilot Chat to explain how `python-dotenv` loads environment variables securely
+- Copilot Chat suggested using `jsonify()` for returning JSON responses from Flask
+
+### JavaScript Assistance
+- Copilot autocompleted the `fetch()` API call to the backend
+- Copilot suggested the async/await pattern for handling the story generation response
+- Copilot generated the clipboard copy functionality
+
+### Overall Impact
+GitHub Copilot significantly accelerated development by reducing boilerplate code and suggesting best practices, allowing focus on the creative and user experience aspects of the app.
 
 ## 🛠️ Tech Stack
 
@@ -73,9 +87,18 @@ spark-story-generator/
 │   └── index.html      # Frontend UI
 ├── .env                # API key (not included in repo)
 ├── .gitignore          # Excludes secrets
+├── LICENSE             # MIT License
 └── README.md           # This file
 \```
 
 ## 🏆 Competition
 
 Built for the **Microsoft Agents League 2026** — Creative Apps Track.
+
+## 👨‍💻 Developer
+
+Developed by **Thisara Rupasinghe**
+
+## 📄 License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
